@@ -2,118 +2,121 @@
 
 ![Banner do Aparatus Barber](public/banner.png)
 
-O **Aparatus Barber** é uma aplicação web completa e responsiva que moderniza a experiência de agendamento em barbearias. A plataforma permite que usuários encontrem estabelecimentos, explorem serviços e agendem horários de forma intuitiva, com o diferencial de um chat com Inteligência Artificial para facilitar todo o processo.
+O **Aparatus Barber** é uma aplicação web completa e moderna que revoluciona a experiência de agendamento em barbearias. A plataforma conecta usuários a estabelecimentos, permitindo explorar serviços e agendar horários de forma intuitiva. O grande diferencial é o assistente virtual com Inteligência Artificial, que torna todo o processo de agendamento tão natural quanto uma conversa.
 
 ## ✨ Funcionalidades Principais
 
-- **Busca de Barbearias:** Encontre barbearias próximas ou em qualquer localidade.
-- **Visualização de Serviços:** Explore os serviços oferecidos, com descrições e preços.
-- **Agendamento Simplificado:** Escolha a data e o horário desejado em um calendário interativo.
-- **Chat com IA para Agendamento:** Converse com um assistente virtual para encontrar horários, selecionar serviços e confirmar seu agendamento usando linguagem natural.
-- **Pagamento Seguro:** Integração com o Stripe para processar pagamentos de forma rápida e segura.
-- **Área do Usuário:** Visualize seus agendamentos futuros e passados.
-- **Design Responsivo:** Experiência otimizada para desktops e dispositivos móveis.
+- **Busca Inteligente:** Encontre barbearias pelo nome ou explore todas as opções disponíveis.
+- **Catálogo de Serviços:** Visualize serviços detalhados com preços e descrições.
+- **Agendamento via Chat IA:** Converse com o **Aparatus.ai** para verificar disponibilidade, escolher serviços e confirmar agendamentos usando linguagem natural.
+- **Gestão de Horários:** Visualize horários disponíveis em tempo real.
+- **Pagamentos Integrados:** Processamento seguro de pagamentos via Stripe.
+- **Autenticação Social:** Login rápido e seguro com Google.
+- **Painel do Usuário:** Acompanhe seus agendamentos futuros e histórico.
+- **Design Premium:** Interface moderna, responsiva e com animações fluidas.
 
-## 🤖 O Poder do Agendamento com Inteligência Artificial
+## 🤖 Inteligência Artificial Avançada
 
-O coração do projeto é um **chat com IA integrada** que transforma a maneira como os usuários agendam seus horários. Em vez de navegar por múltiplos menus, o usuário pode simplesmente "conversar" com o sistema para:
+O projeto utiliza o modelo **Gemini 2.0 Flash** do Google, integrado via **Vercel AI SDK**, para oferecer uma experiência de chat fluida e contextual. O assistente é capaz de:
 
-- **Buscar horários disponíveis:** Ex: "Quero cortar o cabelo amanhã à tarde".
-- **Selecionar serviços e profissionais:** Ex: "Gostaria de fazer a barba também".
-- **Confirmar e pagar:** O chat guia o usuário até a finalização do agendamento.
-
-A IA, alimentada pelo **Google Gemini Pro**, interpreta a intenção do usuário e interage com o sistema para fornecer uma experiência fluida e humanizada.
+- Entender intenções de agendamento (ex: "quero cortar o cabelo amanhã à tarde").
+- Consultar disponibilidade em tempo real no banco de dados.
+- Sugerir horários vagos de forma inteligente.
+- Realizar o agendamento diretamente pela conversa.
 
 ## 🛠️ Tecnologias Utilizadas
 
-O projeto foi construído com uma stack moderna e robusta, focada em performance e escalabilidade:
+Este projeto foi construído com as tecnologias mais recentes do ecossistema web:
 
 - **Frontend:**
-  - **Next.js:** Framework React para renderização no servidor (SSR) e geração de sites estáticos (SSG).
-  - **React:** Biblioteca para construção de interfaces de usuário.
-  - **Tailwind CSS:** Framework de CSS utilitário para um design rápido e moderno.
-  - **shadcn/ui:** Componentes de UI reusáveis e acessíveis.
+  - **Next.js 16:** O framework React mais moderno para web.
+  - **React 19:** Última versão da biblioteca de interfaces.
+  - **Tailwind CSS v4:** Estilização utilitária de alta performance.
+  - **shadcn/ui:** Componentes de interface acessíveis e customizáveis.
+  - **Framer Motion / Tailwind Animate:** Animações fluidas.
 
-- **Backend:**
-  - **Next.js API Routes:** Para a construção de endpoints da API.
-  - **PostgreSQL:** Banco de dados relacional para armazenar dados da aplicação.
-  - **Prisma ORM:** ORM de próxima geração para TypeScript e Node.js.
+- **Backend & Dados:**
+  - **PostgreSQL:** Banco de dados relacional robusto.
+  - **Prisma ORM:** Acesso ao banco de dados com tipagem segura.
+  - **Server Actions:** Lógica de backend executada diretamente no Next.js.
 
-- **Inteligência Artificial:**
-  - **Google Gemini Pro:** Modelo de linguagem avançado para o chat de agendamento.
+- **IA & Integrações:**
+  - **Vercel AI SDK:** SDK padrão da indústria para aplicações de IA.
+  - **Google Gemini 2.0 Flash:** Modelo de linguagem de alta performance e baixa latência.
+  - **Better Auth:** Autenticação completa e segura (substituindo NextAuth).
+  - **Stripe:** Infraestrutura de pagamentos global.
 
-- **Autenticação e Pagamentos:**
-  - **Auth.js (NextAuth):** Solução completa para autenticação e gerenciamento de sessões.
-  - **Stripe:** Plataforma de pagamentos online para processar as transações.
+## 🚀 Como Executar o Projeto
 
-## 🚀 Como Executar o Projeto Localmente
+### Pré-requisitos
 
-Siga os passos abaixo para configurar e rodar a aplicação em seu ambiente de desenvolvimento.
+- **Node.js** (versão 20 ou superior recomendada)
+- **pnpm** (gerenciador de pacotes)
+- **PostgreSQL** (banco de dados)
 
-### 1. Pré-requisitos
+### Passo a Passo
 
-- [Node.js](https://nodejs.org/en/) (versão 18 ou superior)
-- [pnpm](https://pnpm.io/installation) (ou outro gerenciador de pacotes como npm/yarn)
-- Um banco de dados PostgreSQL em execução.
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/aparatus-barber.git
+   cd aparatus-barber
+   ```
 
-### 2. Clonar o Repositório
+2. **Instale as dependências:**
+   ```bash
+   pnpm install
+   ```
 
-```bash
-git clone https://github.com/seu-usuario/aparatus-barber.git
-cd aparatus-barber
-```
+3. **Configure as Variáveis de Ambiente:**
+   Crie um arquivo `.env` na raiz do projeto e preencha com suas credenciais:
 
-### 3. Instalar as Dependências
+   ```env
+   # Banco de Dados
+   DATABASE_URL="postgresql://user:password@localhost:5432/aparatus_barber"
 
-```bash
-pnpm install
-```
+   # Autenticação (Better Auth & Google)
+   BETTER_AUTH_SECRET="seu_secret_gerado_aqui"
+   BETTER_AUTH_URL="http://localhost:3000"
+   GOOGLE_CLIENT_ID="seu_google_client_id"
+   GOOGLE_CLIENT_SECRET="seu_google_client_secret"
 
-### 4. Configurar as Variáveis de Ambiente
+   # Inteligência Artificial (Google Gemini)
+   GOOGLE_GENERATIVE_AI_API_KEY="sua_chave_api_google_ai_studio"
 
-Crie um arquivo `.env` na raiz do projeto, copiando o conteúdo do arquivo `.env.example`:
+   # Pagamentos (Stripe)
+   STRIPE_SECRET_KEY="sk_test_..."
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+   STRIPE_WEBHOOK_SECRET="whsec_..."
 
-```bash
-cp .env.example .env
-```
+   # App
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   ```
 
-Agora, preencha o arquivo `.env` com as suas chaves e credenciais:
+4. **Configure o Banco de Dados:**
+   Execute as migrações para criar as tabelas:
+   ```bash
+   pnpm prisma migrate dev
+   ```
+   (Opcional) Popule o banco com dados iniciais:
+   ```bash
+   pnpm prisma db seed
+   ```
 
-- `DATABASE_URL`: URL de conexão do seu banco de dados PostgreSQL.
-- `GOOGLE_API_KEY`: Sua chave de API do Google AI Studio (para o Gemini Pro).
-- `STRIPE_SECRET_KEY`: Sua chave secreta do Stripe.
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Sua chave publicável do Stripe.
-- `STRIPE_WEBHOOK_SECRET`: O segredo do seu webhook do Stripe.
-- `NEXT_PUBLIC_APP_URL`: A URL base da sua aplicação (ex: `http://localhost:3000`).
-- `NEXTAUTH_SECRET`: Um segredo para o NextAuth (gere um com `openssl rand -base64 32`).
-- `NEXTAUTH_URL`: A URL base da sua aplicação (ex: `http://localhost:3000`).
+5. **Inicie o Servidor de Desenvolvimento:**
+   ```bash
+   pnpm dev
+   ```
 
-### 5. Executar as Migrations do Banco de Dados
-
-Aplique o schema do Prisma ao seu banco de dados:
-
-```bash
-pnpm prisma migrate dev
-```
-
-Opcionalmente, você pode popular o banco com dados de exemplo:
-
-```bash
-pnpm prisma db seed
-```
-
-### 6. Iniciar o Servidor de Desenvolvimento
-
-```bash
-pnpm dev
-```
-
-A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
+6. **Acesse a aplicação:**
+   Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 ## 🔮 Próximos Passos
 
-O Aparatus Barber é um projeto em constante evolução. Futuras melhorias planejadas incluem:
+- [ ] Implementar sistema de notificações (Email/WhatsApp).
+- [ ] Adicionar painel administrativo para barbearias.
+- [ ] Expandir para múltiplos provedores de IA.
+- [ ] Implementar avaliações de usuários.
 
-- **Sistema de Notificações:** Lembretes de agendamento via e-mail ou WhatsApp.
-- **Avaliações e Comentários:** Permitir que clientes avaliem as barbearias e os serviços.
-- **Painel de Controle para Barbearias:** Uma área de gestão para os donos de estabelecimentos.
+---
+
+Desenvolvido com ❤️ usando as melhores tecnologias web.
