@@ -1,4 +1,4 @@
-import { streamText, convertToModelMessages, tool, stepCountIs } from "ai";
+import { streamText, convertToModelMessages, tool } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -40,10 +40,15 @@ export const POST = async (request: Request) => {
       ? `\n\nHistórico de agendamentos do usuário:\n${userBookingHistory.map((h, i) => `${i + 1}. ${h}`).join("\n")}`
       : "";
 
+  console.log("[CHAT] Received messages:", messages.length);
+  console.log("[CHAT] User ID:", userId);
+  
+  try {
   const result = streamText({
-    // Updated to Gemini 2.5 Flash for improved performance and capabilities
-    model: google("gemini-2.5-flash-preview-05-20"),
-    stopWhen: stepCountIs(10),
+    // Using Google Gemini 2.0 Flash
+    model: google("gemini-2.0-flash"),
+    // Disable retries to fail fast and show error to user
+    maxRetries: 0,
     system: `Você é o Aparatus.ai, um assistente virtual de agendamento de barbearias amigável e eficiente.
 
     DATA ATUAL: Hoje é ${new Date().toLocaleDateString("pt-BR", {
@@ -116,6 +121,9 @@ export const POST = async (request: Request) => {
     - Se não houver horários, sugira outra data
     - Para "hoje", "amanhã", dias da semana → calcule a data correta`,
     messages: convertToModelMessages(messages),
+    onStepFinish: async (step) => {
+      console.log("[CHAT] Step finished:", JSON.stringify(step, null, 2).substring(0, 500));
+    },
     tools: {
       searchBarbershops: tool({
         description:
@@ -353,4 +361,35 @@ export const POST = async (request: Request) => {
     },
   });
   return result.toUIMessageStreamResponse();
+  } catch (error: unknown) {
+    console.error("[CHAT] Error:", error);
+    
+    // Check if it's a quota error
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const isQuotaError = errorMessage.includes("quota") || errorMessage.includes("429") || errorMessage.includes("RESOURCE_EXHAUSTED");
+    
+    if (isQuotaError) {
+      return new Response(
+        JSON.stringify({
+          error: "quota_exceeded",
+          message: "😅 Ops! O serviço está temporariamente indisponível devido ao alto volume de acessos. Por favor, tente novamente em alguns minutos.",
+        }),
+        { 
+          status: 429,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+    }
+    
+    return new Response(
+      JSON.stringify({
+        error: "server_error",
+        message: "😔 Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
+      }),
+      { 
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      }
+    );
+  }
 };
