@@ -66,10 +66,7 @@ export const ChatSidebar = ({
             {/* Header */}
             <div className="p-4 flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2">
-                <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-bold text-sm">A</span>
-                </div>
-                <span className="font-merriweather text-lg italic text-sidebar-foreground">
+                <span className="font-merriweather text-xl italic text-sidebar-foreground">
                   Aparatus
                 </span>
               </Link>

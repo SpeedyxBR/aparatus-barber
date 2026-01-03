@@ -11,6 +11,7 @@ import { ChatInput } from "./_components/chat-input";
 import { ChatSidebar } from "./_components/chat-sidebar";
 import { ChatHeader } from "./_components/chat-header";
 import { Button } from "@/app/_components/ui/button";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 const INITIAL_MESSAGES = [
@@ -42,6 +43,9 @@ export default function ChatPage() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Get user session
+  const { data: session } = authClient.useSession();
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
@@ -113,6 +117,12 @@ export default function ChatPage() {
           isOpen={sidebarOpen}
           onToggle={() => setSidebarOpen(!sidebarOpen)}
           onNewChat={() => window.location.reload()}
+          user={session?.user ? {
+            name: session.user.name || "Usuário",
+            email: session.user.email || "",
+            image: session.user.image || undefined,
+          } : null}
+          onLogout={() => authClient.signOut()}
         />
       )}
 
@@ -248,6 +258,12 @@ export default function ChatPage() {
             setSidebarOpen(false);
             window.location.reload();
           }}
+          user={session?.user ? {
+            name: session.user.name || "Usuário",
+            email: session.user.email || "",
+            image: session.user.image || undefined,
+          } : null}
+          onLogout={() => authClient.signOut()}
         />
       )}
     </div>
