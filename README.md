@@ -17,12 +17,14 @@ O **Aparatus Barber** é uma aplicação web completa e moderna que revoluciona 
 
 ## 🤖 Inteligência Artificial Avançada
 
-O projeto utiliza o modelo **Gemini 2.0 Flash** do Google, integrado via **Vercel AI SDK**, para oferecer uma experiência de chat fluida e contextual. O assistente é capaz de:
+O projeto utiliza o modelo **Gemini 2.5 Flash** do Google, a versão mais recente e avançada, integrado via **Vercel AI SDK**, para oferecer uma experiência de chat fluida e contextual. O assistente é capaz de:
 
 - Entender intenções de agendamento (ex: "quero cortar o cabelo amanhã à tarde").
 - Consultar disponibilidade em tempo real no banco de dados.
 - Sugerir horários vagos de forma inteligente.
 - Realizar o agendamento diretamente pela conversa.
+- **Personalização:** Lembrar do histórico de agendamentos do usuário para sugestões personalizadas.
+- **Interface Responsiva:** Layout split-screen para desktop com sidebar de histórico de conversas.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -42,7 +44,7 @@ Este projeto foi construído com as tecnologias mais recentes do ecossistema web
 
 - **IA & Integrações:**
   - **Vercel AI SDK:** SDK padrão da indústria para aplicações de IA.
-  - **Google Gemini 2.0 Flash:** Modelo de linguagem de alta performance e baixa latência.
+  - **Google Gemini 2.5 Flash:** Modelo de linguagem mais avançado com suporte a thinking e alta performance.
   - **Better Auth:** Autenticação completa e segura (substituindo NextAuth).
   - **Stripe:** Infraestrutura de pagamentos global.
 
