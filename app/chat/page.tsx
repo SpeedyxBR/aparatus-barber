@@ -40,12 +40,29 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
+    onError: (err) => {
+      console.error("[CHAT] Error:", err);
+      // Parse error message if it's a JSON response
+      try {
+        const parsed = JSON.parse(err.message);
+        setErrorMessage(parsed.message || "Ocorreu um erro. Tente novamente.");
+      } catch {
+        if (err.message.includes("429") || err.message.includes("quota")) {
+          setErrorMessage("😅 O serviço está temporariamente indisponível. Tente novamente em alguns minutos.");
+        } else {
+          setErrorMessage("😔 Desculpe, ocorreu um erro. Por favor, tente novamente.");
+        }
+      }
+      // Clear error after 5 seconds
+      setTimeout(() => setErrorMessage(null), 5000);
+    },
   });
 
   // Check if desktop
@@ -156,6 +173,27 @@ export default function ChatPage() {
                       isStreaming={isTyping && index === messages.length - 1}
                     />
                   ))}
+            </AnimatePresence>
+
+            {/* Error Message */}
+            <AnimatePresence>
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex items-start gap-2 px-4 sm:px-6 pt-4"
+                >
+                  <div className="size-8 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Bot className="size-4 text-destructive" />
+                  </div>
+                  <div className="bg-destructive/10 border border-destructive/20 rounded-2xl rounded-bl-md px-4 py-2.5 shadow-sm max-w-[80%]">
+                    <p className="text-sm text-destructive leading-relaxed">
+                      {errorMessage}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
 
             {/* Loading Indicator */}
