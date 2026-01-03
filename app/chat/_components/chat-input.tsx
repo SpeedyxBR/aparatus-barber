@@ -1,10 +1,10 @@
 "use client";
 
-import { Mic, Send, Paperclip, Loader2 } from "lucide-react";
+import { Mic, MicOff, Send, Paperclip, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/app/_components/ui/button";
 import { cn } from "@/lib/utils";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 interface ChatInputProps {
   input: string;
@@ -13,6 +13,37 @@ interface ChatInputProps {
   isLoading?: boolean;
   placeholder?: string;
   className?: string;
+}
+
+// Type declarations for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  onstart: (() => void) | null;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
 }
 
 export const ChatInput = ({
@@ -24,6 +55,75 @@ export const ChatInput = ({
   className,
 }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  // Check if speech recognition is supported
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      setSpeechSupported(!!SpeechRecognition);
+    }
+  }, []);
+
+  // Initialize speech recognition
+  const startListening = useCallback(() => {
+    if (!speechSupported) return;
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "pt-BR";
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+
+      // Create a synthetic event to update the input
+      const syntheticEvent = {
+        target: { value: input + transcript },
+      } as React.ChangeEvent<HTMLTextAreaElement>;
+      onChange(syntheticEvent);
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error("Speech recognition error:", event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  }, [speechSupported, input, onChange]);
+
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  }, []);
+
+  const toggleListening = useCallback(() => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  }, [isListening, startListening, stopListening]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -78,7 +178,7 @@ export const ChatInput = ({
             value={input}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder={placeholder}
+            placeholder={isListening ? "🎤 Ouvindo..." : placeholder}
             disabled={isLoading}
             rows={1}
             className={cn(
@@ -86,7 +186,8 @@ export const ChatInput = ({
               "text-sm placeholder:text-muted-foreground",
               "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
               "disabled:cursor-not-allowed disabled:opacity-50",
-              "max-h-[120px] scrollbar-thin scrollbar-thumb-muted"
+              "max-h-[120px] scrollbar-thin scrollbar-thumb-muted",
+              isListening && "ring-2 ring-destructive ring-offset-1"
             )}
           />
         </div>
@@ -98,11 +199,27 @@ export const ChatInput = ({
             type="button"
             variant="ghost"
             size="icon"
-            className="shrink-0 size-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent"
-            disabled
-            title="Em breve: Gravação de voz"
+            onClick={toggleListening}
+            disabled={!speechSupported || isLoading}
+            title={
+              !speechSupported
+                ? "Gravação de voz não suportada neste navegador"
+                : isListening
+                  ? "Parar gravação"
+                  : "Iniciar gravação de voz"
+            }
+            className={cn(
+              "shrink-0 size-10 rounded-full transition-all duration-200",
+              isListening
+                ? "bg-destructive text-destructive-foreground hover:bg-destructive/90 animate-pulse"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent"
+            )}
           >
-            <Mic className="size-5" />
+            {isListening ? (
+              <MicOff className="size-5" />
+            ) : (
+              <Mic className="size-5" />
+            )}
           </Button>
 
           {/* Send Button */}
@@ -138,14 +255,16 @@ export const ChatInput = ({
 
       {/* Typing indicator hint */}
       <AnimatePresence>
-        {input.length > 0 && (
+        {(input.length > 0 || isListening) && (
           <motion.p
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="text-xs text-muted-foreground mt-2 text-center"
           >
-            Pressione Enter para enviar • Shift + Enter para nova linha
+            {isListening
+              ? "🎤 Fale agora... Clique no microfone para parar"
+              : "Pressione Enter para enviar • Shift + Enter para nova linha"}
           </motion.p>
         )}
       </AnimatePresence>
